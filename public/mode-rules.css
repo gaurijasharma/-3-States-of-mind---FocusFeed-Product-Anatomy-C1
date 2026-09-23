@@ -1,0 +1,159 @@
+/**
+ * FocusFeed: mode-rules.css
+ * Static page-level rules triggered exclusively by data-focusfeed-mode on <html>.
+ * INJECTED AT document_start TO PREVENT ANY FLASH OF UNFILTERED CONTENT.
+ * Contains ONLY element hide/layout rules — NO resets, NO Tailwind, NO typography overrides.
+ */
+
+/* ==========================================================================
+   Mode 1: Find Something (data-focusfeed-mode="find")
+   ========================================================================== */
+
+/* Hide Homepage Recommendations Grid */
+html[data-focusfeed-mode="find"] ytd-browse[page-subtype="home"] #contents.ytd-rich-grid-renderer,
+html[data-focusfeed-mode="find"] ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html[data-focusfeed-mode="find"] ytd-browse[page-subtype="home"] #contents,
+html[data-focusfeed-mode="find"] ytd-browse[page-subtype="home"] #primary,
+html[data-focusfeed-mode="find"] ytd-two-column-browse-results-renderer[page-subtype="home"],
+html[data-focusfeed-mode="find"] ytd-two-column-browse-results-renderer[page-subtype="home"] #contents,
+html[data-focusfeed-mode="find"] ytd-two-column-browse-results-renderer[page-subtype="home"] ytd-rich-grid-renderer {
+  display: none !important;
+}
+
+/* Hide Shorts Everywhere (Shelf, Sidebar Link, Channel Tab, Results) */
+html[data-focusfeed-mode="find"] ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+html[data-focusfeed-mode="find"] ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+html[data-focusfeed-mode="find"] ytd-rich-shelf-renderer[is-shorts],
+html[data-focusfeed-mode="find"] ytd-reel-shelf-renderer,
+html[data-focusfeed-mode="find"] ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="find"] ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="find"] yt-tab-shape[tab-title*="Shorts"],
+html[data-focusfeed-mode="find"] a[title="Shorts"],
+html[data-focusfeed-mode="find"] ytd-search ytd-reel-shelf-renderer {
+  display: none !important;
+}
+
+/* Hide Watch Page Sidebar (Up next / recommendations) */
+html[data-focusfeed-mode="find"] ytd-watch-flexy #secondary #related,
+html[data-focusfeed-mode="find"] ytd-watch-grid #secondary #related,
+html[data-focusfeed-mode="find"] ytd-watch-grid #related,
+html[data-focusfeed-mode="find"] ytd-watch-flexy #related,
+html[data-focusfeed-mode="find"] #secondary #related,
+html[data-focusfeed-mode="find"] ytd-watch-next-secondary-results-renderer {
+  display: none !important;
+}
+
+/* Hide End Screen Cards & Distractions on Player */
+html[data-focusfeed-mode="find"] .ytp-ce-element,
+html[data-focusfeed-mode="find"] .ytp-endscreen-content {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Mode 2: Focus & Learn (data-focusfeed-mode="focus")
+   ========================================================================== */
+
+/* Hide Homepage Recommendations Grid */
+html[data-focusfeed-mode="focus"] ytd-browse[page-subtype="home"] #contents.ytd-rich-grid-renderer,
+html[data-focusfeed-mode="focus"] ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html[data-focusfeed-mode="focus"] ytd-browse[page-subtype="home"] #contents,
+html[data-focusfeed-mode="focus"] ytd-browse[page-subtype="home"] #primary,
+html[data-focusfeed-mode="focus"] ytd-two-column-browse-results-renderer[page-subtype="home"],
+html[data-focusfeed-mode="focus"] ytd-two-column-browse-results-renderer[page-subtype="home"] #contents,
+html[data-focusfeed-mode="focus"] ytd-two-column-browse-results-renderer[page-subtype="home"] ytd-rich-grid-renderer {
+  display: none !important;
+}
+
+/* Hide Shorts Everywhere */
+html[data-focusfeed-mode="focus"] ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+html[data-focusfeed-mode="focus"] ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+html[data-focusfeed-mode="focus"] ytd-rich-shelf-renderer[is-shorts],
+html[data-focusfeed-mode="focus"] ytd-reel-shelf-renderer,
+html[data-focusfeed-mode="focus"] ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="focus"] ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="focus"] yt-tab-shape[tab-title*="Shorts"],
+html[data-focusfeed-mode="focus"] a[title="Shorts"] {
+  display: none !important;
+}
+
+/* Watch Page: Hide Algorithmic Related Videos, KEEP Playlist Panel */
+html[data-focusfeed-mode="focus"] ytd-watch-flexy #secondary #related,
+html[data-focusfeed-mode="focus"] ytd-watch-grid #secondary #related,
+html[data-focusfeed-mode="focus"] ytd-watch-grid #related,
+html[data-focusfeed-mode="focus"] ytd-watch-flexy #related,
+html[data-focusfeed-mode="focus"] #secondary #related,
+html[data-focusfeed-mode="focus"] ytd-watch-next-secondary-results-renderer {
+  display: none !important;
+}
+
+/* Ensure Playlist Panel is explicitly kept in Focus mode */
+html[data-focusfeed-mode="focus"] ytd-playlist-panel-renderer,
+html[data-focusfeed-mode="focus"] #secondary #playlist {
+  display: block !important;
+}
+
+/* Hide End Screen Cards */
+html[data-focusfeed-mode="focus"] .ytp-ce-element,
+html[data-focusfeed-mode="focus"] .ytp-endscreen-content {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Mode 3: Catch Up (data-focusfeed-mode="catchup")
+   ========================================================================== */
+
+/* Hide Homepage Recommendations Grid */
+html[data-focusfeed-mode="catchup"] ytd-browse[page-subtype="home"] #contents.ytd-rich-grid-renderer,
+html[data-focusfeed-mode="catchup"] ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html[data-focusfeed-mode="catchup"] ytd-browse[page-subtype="home"] #contents,
+html[data-focusfeed-mode="catchup"] ytd-browse[page-subtype="home"] #primary,
+html[data-focusfeed-mode="catchup"] ytd-two-column-browse-results-renderer[page-subtype="home"],
+html[data-focusfeed-mode="catchup"] ytd-two-column-browse-results-renderer[page-subtype="home"] #contents,
+html[data-focusfeed-mode="catchup"] ytd-two-column-browse-results-renderer[page-subtype="home"] ytd-rich-grid-renderer {
+  display: none !important;
+}
+
+/* Hide Shorts Everywhere */
+html[data-focusfeed-mode="catchup"] ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+html[data-focusfeed-mode="catchup"] ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+html[data-focusfeed-mode="catchup"] ytd-rich-shelf-renderer[is-shorts],
+html[data-focusfeed-mode="catchup"] ytd-reel-shelf-renderer,
+html[data-focusfeed-mode="catchup"] ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="catchup"] ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="catchup"] yt-tab-shape[tab-title*="Shorts"],
+html[data-focusfeed-mode="catchup"] a[title="Shorts"] {
+  display: none !important;
+}
+
+/* Hide Watch Page Sidebar */
+html[data-focusfeed-mode="catchup"] ytd-watch-flexy #secondary #related,
+html[data-focusfeed-mode="catchup"] ytd-watch-grid #secondary #related,
+html[data-focusfeed-mode="catchup"] ytd-watch-grid #related,
+html[data-focusfeed-mode="catchup"] ytd-watch-flexy #related,
+html[data-focusfeed-mode="catchup"] #secondary #related,
+html[data-focusfeed-mode="catchup"] ytd-watch-next-secondary-results-renderer {
+  display: none !important;
+}
+
+/* Hide End Screen Cards */
+html[data-focusfeed-mode="catchup"] .ytp-ce-element,
+html[data-focusfeed-mode="catchup"] .ytp-endscreen-content {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Mode 4: Explore (data-focusfeed-mode="explore")
+   Respects toggles
+   ========================================================================== */
+
+/* If Shorts are toggled OFF in Explore mode */
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] ytd-rich-shelf-renderer[is-shorts],
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] ytd-reel-shelf-renderer,
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] yt-tab-shape[tab-title*="Shorts"],
+html[data-focusfeed-mode="explore"][data-focusfeed-shorts="off"] a[title="Shorts"] {
+  display: none !important;
+}
