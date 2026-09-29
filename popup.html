@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusFeed Extension Mode ON/OFF Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0F0F0F;
+      --surface-elevated: #181818;
+      --surface-secondary: #212121;
+      --surface-hover: #2A2A2A;
+      --border-subtle: #2A2A2A;
+      --border-hover: #383838;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B3B3B3;
+      --text-muted: #777777;
+      --accent-cyan: #00E5FF;
+      --accent-cyan-hover: #00B4D8;
+      --accent-cyan-glow: rgba(0, 229, 255, 0.15);
+      --accent-cyan-subtle: rgba(0, 229, 255, 0.08);
+      --yt-red: #FF0000;
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #050505;
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .demo-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .demo-title span {
+      background: var(--surface-secondary);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-cyan);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* CHROME TOOLBAR POPUP WINDOW FRAME */
+    .chrome-popup-frame {
+      width: 350px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 1px var(--accent-cyan);
+      user-select: none;
+      position: relative;
+    }
+
+    /* Header */
+    .popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 16px;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--surface-secondary);
+      border: 1px solid var(--accent-cyan);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px var(--accent-cyan-glow);
+    }
+
+    .brand-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent-cyan);
+    }
+
+    .brand-titles h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .brand-titles span {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .settings-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-secondary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .settings-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .settings-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+    }
+
+    /* MASTER EXTENSION MODE TOGGLE ROW */
+    .master-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .master-toggle-row.on {
+      border-color: rgba(0, 229, 255, 0.3);
+      background: var(--surface-secondary);
+    }
+
+    .master-label-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .master-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .master-toggle-row.on .status-badge-dot {
+      background-color: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+
+    .master-status-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Gliding Switch Button */
+    .switch-btn {
+      width: 44px;
+      height: 24px;
+      background: #333333;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .switch-knob {
+      width: 20px;
+      height: 20px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .switch-btn.on {
+      background: var(--accent-cyan);
+    }
+
+    .switch-btn.on .switch-knob {
+      transform: translateX(20px);
+    }
+
+    .section-heading {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    /* Mode Selection Grid */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: stretch;
+    }
+
+    .mode-item {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 108px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .mode-item:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+
+    .mode-item.active {
+      background: var(--surface-secondary);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px var(--accent-cyan-glow);
+    }
+
+    .mode-item.active::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+
+    .mode-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .mode-header svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-secondary);
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: stroke 0.2s ease;
+    }
+
+    .mode-item.active .mode-header svg {
+      stroke: var(--accent-cyan);
+    }
+
+    .mode-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    .mode-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+      margin-top: auto;
+    }
+
+    /* Mode Summary Card (Expandable Details) */
+    .mode-summary-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .summary-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: var(--surface-elevated);
+      transition: background-color 0.2s ease;
+    }
+
+    .summary-header:hover {
+      background: var(--surface-hover);
+    }
+
+    .summary-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    .summary-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      border-radius: 4px;
+      padding: 2px 6px;
+      flex-shrink: 0;
+    }
+
+    .summary-intent-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .summary-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .summary-toggle-btn svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .summary-toggle-btn.open svg {
+      transform: rotate(180deg);
+    }
+
+    .summary-body {
+      padding: 0 12px 12px 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .summary-body.collapsed {
+      display: none;
+    }
+
+    .summary-cols {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .summary-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .col-heading {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .col-heading.visible-heading {
+      color: var(--accent-cyan);
+    }
+
+    .col-heading.hidden-heading {
+      color: #FF5555;
+    }
+
+    .col-heading svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .summary-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .summary-list li {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+      display: flex;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    .summary-list li .bullet-icon {
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .summary-list.visible-list li .bullet-icon {
+      color: var(--accent-cyan);
+    }
+
+    .summary-list.hidden-list li .bullet-icon {
+      color: #FF5555;
+    }
+
+    /* Optional Controls Row */
+    .optional-controls-row {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .opt-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .opt-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .switch-btn.sm {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+    }
+
+    .switch-btn.sm .switch-knob {
+      width: 16px;
+      height: 16px;
+      top: 2px;
+      left: 2px;
+    }
+
+    .switch-btn.sm.on .switch-knob {
+      transform: translateX(16px);
+    }
+
+    /* Floating Tag Simulation on YouTube Screen */
+    .yt-sim-screen {
+      margin-top: 24px;
+      width: 350px;
+      background: #121212;
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .yt-sim-title {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* REFINED YOUTUBE SCREEN TAG (BOTTOM-RIGHT) */
+    .yt-floating-tag {
+      align-self: flex-end;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1F1F1F;
+      border: 1px solid var(--border-subtle);
+      padding: 8px 14px;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .yt-floating-tag.hidden {
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+    }
+
+    .tag-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+
+    .tag-text-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tag-mode-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .tag-subtext {
+      font-size: 11px;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    .tag-exit-btn {
+      background: #2A2A2A;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: #FF5555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .tag-exit-btn:hover {
+      background: #FF0000;
+      color: #FFFFFF;
+    }
+
+    /* Footer */
+    .popup-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .privacy-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .privacy-tag::before {
+      content: '✓';
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-title">
+    FocusFeed Chrome Extension <span>UNIFIED ON/OFF STATE</span>
+  </div>
+
+  <div class="chrome-popup-frame">
+    <!-- HEADER -->
+    <header class="popup-header">
+      <div class="brand-box">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1>FocusFeed</h1>
+          <span>Intent Layer</span>
+        </div>
+      </div>
+      <button class="settings-btn" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </header>
+
+    <!-- MASTER TOGGLE ROW -->
+    <div class="master-toggle-row on" id="master-toggle-row">
+      <div class="master-label-group">
+        <div class="master-title">
+          <span class="status-badge-dot"></span>
+          <span>Extension Mode</span>
+        </div>
+        <span class="master-status-text" id="master-status-text">ON — Focus & Learn</span>
+      </div>
+      <div class="switch-btn on" id="master-switch" onclick="toggleMaster()">
+        <div class="switch-knob"></div>
+      </div>
+    </div>
+
+    <div class="section-heading">Select Intent Mode</div>
+
+    <!-- MAIN MODE CARDS GRID -->
+    <div class="modes-grid" id="modes-grid">
+      <!-- Mode 1: Find Something -->
+      <div class="mode-item" data-mode="find" onclick="selectMode('find')">
+        <div class="mode-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span class="mode-title">Find Something</span>
+        </div>
+        <p class="mode-desc">Search & watch one video</p>
+      </div>
+
+      <!-- Mode 2: Focus & Learn -->
+      <div class="mode-item active" data-mode="focus" onclick="selectMode('focus')">
+        <div class="mode-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <span class="mode-title">Focus & Learn</span>
+        </div>
+        <p class="mode-desc">Tutorials & playlist autoplay</p>
+      </div>
+
+      <!-- Mode 3: Catch Up -->
+      <div class="mode-item" data-mode="catchup" onclick="selectMode('catchup')">
+        <div class="mode-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="mode-title">Catch Up</span>
+        </div>
+        <p class="mode-desc">Subscriptions only</p>
+      </div>
+
+      <!-- Mode 4: Explore -->
+      <div class="mode-item" data-mode="explore" onclick="selectMode('explore')">
+        <div class="mode-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <span class="mode-title">Explore</span>
+        </div>
+        <p class="mode-desc">Curated browsing</p>
+      </div>
+    </div>
+
+    <!-- MODE SUMMARY CARD (EXPANDABLE DETAILS) -->
+    <div class="mode-summary-card" id="mode-summary-card">
+      <div class="summary-header" id="summary-header" onclick="toggleSummaryDetails(event)">
+        <div class="summary-title-group">
+          <span class="summary-badge">Intent</span>
+          <span class="summary-intent-text" id="summary-intent-text">I want to learn something.</span>
+        </div>
+        <button class="summary-toggle-btn open" id="summary-toggle-btn" title="Toggle Mode Summary Details">
+          <span>Details</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+
+      <div class="summary-body" id="summary-body">
+        <div class="summary-cols">
+          <!-- SHOWN / PRIORITIZED / ALLOWED -->
+          <div class="summary-col">
+            <div class="col-heading visible-heading">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="visible-col-title">Prioritized</span>
+            </div>
+            <ul class="summary-list visible-list" id="visible-list"></ul>
+          </div>
+
+          <!-- HIDDEN -->
+          <div class="summary-col">
+            <div class="col-heading hidden-heading">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <span>Hidden</span>
+            </div>
+            <ul class="summary-list hidden-list" id="hidden-list"></ul>
+          </div>
+        </div>
+
+        <!-- OPTIONAL CONTROLS FOR EXPLORE MODE -->
+        <div class="optional-controls-row" id="optional-controls-row" style="display: none;">
+          <div class="opt-control">
+            <span class="opt-label">Shorts</span>
+            <div class="switch-btn sm on" id="opt-shorts-switch" onclick="toggleOptShorts(event)">
+              <div class="switch-knob"></div>
+            </div>
+          </div>
+          <div class="opt-control">
+            <span class="opt-label">Autoplay</span>
+            <div class="switch-btn sm on" id="opt-autoplay-switch" onclick="toggleOptAutoplay(event)">
+              <div class="switch-knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="popup-footer">
+      <span class="privacy-tag">Zero data collected</span>
+      <span>v1.0.0</span>
+    </footer>
+  </div>
+
+  <!-- YOUTUBE SCREEN FLOATING TAG PREVIEW -->
+  <div class="yt-sim-screen">
+    <span class="yt-sim-title">Live YouTube Page Bottom-Right View</span>
+
+    <div class="yt-floating-tag" id="yt-tag">
+      <div class="tag-status-indicator">
+        <span class="tag-dot"></span>
+        <div class="tag-text-group">
+          <span class="tag-mode-name" id="tag-mode-title">Focus & Learn</span>
+          <span class="tag-subtext">Extension Mode ON</span>
+        </div>
+      </div>
+      <button class="tag-exit-btn" onclick="toggleMaster()" title="Exit Mode">✕</button>
+    </div>
+  </div>
+
+  <script>
+    let isOn = true;
+    let activeMode = 'focus';
+    let summaryExpanded = true;
+    let shortsEnabled = true;
+    let autoplayEnabled = true;
+
+    const modeNames = {
+      find: 'Find Something',
+      focus: 'Focus & Learn',
+      catchup: 'Catch Up',
+      explore: 'Explore'
+    };
+
+    const modeDetailsData = {
+      find: {
+        intent: "I know what I'm looking for.",
+        visibleTitle: "Shown",
+        visible: ["Search", "Search results", "Channels", "Playlists", "Current video"],
+        hidden: ["Homepage recommendations", "Shorts", "Related videos", "Autoplay", "End-screen recommendations"],
+        hasOptionalControls: false
+      },
+      focus: {
+        intent: "I want to learn something.",
+        visibleTitle: "Prioritized",
+        visible: ["Search", "Subscriptions", "Playlists", "Long-form videos", "Current video", "Chapters"],
+        hidden: ["Shorts", "Homepage recommendations", "Autoplay", "Related videos", "End-screen recommendations"],
+        hasOptionalControls: false
+      },
+      catchup: {
+        intent: "I want to see what creators I follow have posted.",
+        visibleTitle: "Prioritized",
+        visible: ["Subscriptions", "Followed channels", "New uploads", "Watch Later"],
+        hidden: ["Generic recommendations", "Trending", "Shorts", "Unrelated discovery"],
+        hasOptionalControls: false
+      },
+      explore: {
+        intent: "I intentionally want to browse.",
+        visibleTitle: "Allowed",
+        visible: ["Recommendations", "Search", "Related videos", "Subscriptions", "Discovery"],
+        hidden: ["Shorts (Optional)", "Autoplay (Optional)"],
+        hasOptionalControls: true
+      }
+    };
+
+    function toggleMaster() {
+      isOn = !isOn;
+      updateAll();
+    }
+
+    function selectMode(m) {
+      activeMode = m;
+      isOn = true;
+      updateAll();
+    }
+
+    function toggleSummaryDetails(e) {
+      if (e) e.stopPropagation();
+      summaryExpanded = !summaryExpanded;
+      const body = document.getElementById('summary-body');
+      const btn = document.getElementById('summary-toggle-btn');
+      if (summaryExpanded) {
+        body.classList.remove('collapsed');
+        btn.classList.add('open');
+      } else {
+        body.classList.add('collapsed');
+        btn.classList.remove('open');
+      }
+    }
+
+    function toggleOptShorts(e) {
+      if (e) e.stopPropagation();
+      shortsEnabled = !shortsEnabled;
+      const sw = document.getElementById('opt-shorts-switch');
+      if (shortsEnabled) sw.classList.add('on'); else sw.classList.remove('on');
+    }
+
+    function toggleOptAutoplay(e) {
+      if (e) e.stopPropagation();
+      autoplayEnabled = !autoplayEnabled;
+      const sw = document.getElementById('opt-autoplay-switch');
+      if (autoplayEnabled) sw.classList.add('on'); else sw.classList.remove('on');
+    }
+
+    function updateModeSummary() {
+      const data = modeDetailsData[activeMode] || modeDetailsData.focus;
+      const intentText = document.getElementById('summary-intent-text');
+      const visibleTitle = document.getElementById('visible-col-title');
+      const visibleList = document.getElementById('visible-list');
+      const hiddenList = document.getElementById('hidden-list');
+      const optRow = document.getElementById('optional-controls-row');
+
+      if (intentText) intentText.innerText = data.intent;
+      if (visibleTitle) visibleTitle.innerText = data.visibleTitle;
+
+      if (visibleList) {
+        visibleList.innerHTML = data.visible.map(item => `<li><span class="bullet-icon">✓</span><span>${item}</span></li>`).join('');
+      }
+      if (hiddenList) {
+        hiddenList.innerHTML = data.hidden.map(item => `<li><span class="bullet-icon">✕</span><span>${item}</span></li>`).join('');
+      }
+
+      if (optRow) {
+        if (data.hasOptionalControls || activeMode === 'explore') {
+          optRow.style.display = 'flex';
+        } else {
+          optRow.style.display = 'none';
+        }
+      }
+    }
+
+    function updateAll() {
+      const row = document.getElementById('master-toggle-row');
+      const switchBtn = document.getElementById('master-switch');
+      const statusText = document.getElementById('master-status-text');
+      const ytTag = document.getElementById('yt-tag');
+      const tagTitle = document.getElementById('tag-mode-title');
+      const summaryCard = document.getElementById('mode-summary-card');
+
+      if (isOn) {
+        row.classList.add('on');
+        switchBtn.classList.add('on');
+        statusText.innerText = `ON — ${modeNames[activeMode]}`;
+        ytTag.classList.remove('hidden');
+        tagTitle.innerText = modeNames[activeMode];
+        if (summaryCard) summaryCard.style.display = 'block';
+        updateModeSummary();
+      } else {
+        row.classList.remove('on');
+        switchBtn.classList.remove('on');
+        statusText.innerText = 'OFF — Normal YouTube Feed';
+        ytTag.classList.add('hidden');
+        if (summaryCard) summaryCard.style.display = 'none';
+      }
+
+      document.querySelectorAll('.mode-item').forEach(card => {
+        if (isOn && card.getAttribute('data-mode') === activeMode) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+    }
+
+    updateAll();
+  </script>
+</body>
+</html>
