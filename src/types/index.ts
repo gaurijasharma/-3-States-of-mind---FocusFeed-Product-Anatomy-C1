@@ -18,7 +18,7 @@ export interface FocusFeedSettings {
 
 export const DEFAULT_SETTINGS: FocusFeedSettings = {
   schemaVersion: 1,
-  showOverlayOnLoad: true,
+  showOverlayOnLoad: false,
   overlayTrigger: 'homepage_only',
   exploreRememberToggles: false,
   exploreShortsEnabled: true,

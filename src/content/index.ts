@@ -112,13 +112,38 @@ class FocusFeedContentScript {
 
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area === 'local') {
+        let needsUpdate = false;
+
         for (const key of Object.keys(changes)) {
+          // Mode change from popup
           if (key.startsWith('tab_mode_')) {
             const newMode = changes[key].newValue as FocusMode;
             if (newMode !== this.activeMode) {
               this.setMode(newMode, true);
             }
           }
+
+          // Shorts toggle changed (from popup OR badge)
+          if (key === 'ff_explore_shorts') {
+            const newVal = changes[key].newValue as boolean;
+            if (newVal !== this.shortsEnabled) {
+              this.shortsEnabled = newVal;
+              needsUpdate = true;
+            }
+          }
+
+          // Autoplay toggle changed (from popup OR badge)
+          if (key === 'ff_explore_autoplay') {
+            const newVal = changes[key].newValue as boolean;
+            if (newVal !== this.autoplayEnabled) {
+              this.autoplayEnabled = newVal;
+              needsUpdate = true;
+            }
+          }
+        }
+
+        if (needsUpdate) {
+          this.updateComponents();
         }
       }
     });
@@ -272,11 +297,21 @@ class FocusFeedContentScript {
         {
           onExit: () => this.setMode(null),
           onToggleShorts: () => {
-            this.shortsEnabled = !this.shortsEnabled;
+            const next = !this.shortsEnabled;
+            this.shortsEnabled = next;
+            // Save to storage → popup will react via storage.onChanged
+            if (typeof chrome !== 'undefined' && chrome.storage?.local) {
+              chrome.storage.local.set({ ff_explore_shorts: next });
+            }
             this.updateComponents();
           },
           onToggleAutoplay: () => {
-            this.autoplayEnabled = !this.autoplayEnabled;
+            const next = !this.autoplayEnabled;
+            this.autoplayEnabled = next;
+            // Save to storage → popup will react via storage.onChanged
+            if (typeof chrome !== 'undefined' && chrome.storage?.local) {
+              chrome.storage.local.set({ ff_explore_autoplay: next });
+            }
             this.updateComponents();
           },
         }
@@ -287,14 +322,7 @@ class FocusFeedContentScript {
 
     // 2. Empty State on Home
     if (pageType === 'home' && (this.activeMode === 'find' || this.activeMode === 'focus')) {
-      this.emptyStateComp.render(shadow, this.activeMode, {
-        onSearch: (query) => {
-          window.location.href = `/results?search_query=${encodeURIComponent(query)}`;
-        },
-        onNavigate: (url) => {
-          window.location.href = url;
-        },
-      });
+      this.emptyStateComp.render(shadow, this.activeMode);
     } else {
       this.emptyStateComp.destroy();
     }

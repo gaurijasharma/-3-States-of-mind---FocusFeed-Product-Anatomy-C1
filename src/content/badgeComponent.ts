@@ -41,9 +41,32 @@ export class BadgeComponent {
       document.documentElement.getAttribute('data-theme') === 'dark' ||
       window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+    const bg = isDark ? 'rgba(15,15,15,0.97)' : 'rgba(255,255,255,0.97)';
+    const textColor = isDark ? '#FFFFFF' : '#0f172a';
+    const borderColor = isDark ? '#2A2A2A' : '#e2e8f0';
+    const mutedColor = isDark ? '#888888' : '#64748b';
+    const dotColor = '#00E5FF';
+
     const badge = document.createElement('div');
-    badge.className = `fixed bottom-6 right-6 z-[2147483640] flex items-center gap-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800/80 text-slate-800 dark:text-slate-100 font-sans text-xs transition-all hover:shadow-2xl select-none animate-fade-in ${isDark ? 'dark' : ''}`;
-    badge.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:2147483645;display:flex;align-items:center;gap:0.5rem;';
+    badge.style.cssText = [
+      'position:fixed',
+      'bottom:24px',
+      'right:24px',
+      'z-index:2147483645',
+      'display:flex',
+      'align-items:center',
+      'gap:8px',
+      `background:${bg}`,
+      `border:1px solid ${borderColor}`,
+      'border-radius:20px',
+      'padding:8px 14px',
+      'box-shadow:0 8px 24px rgba(0,0,0,0.5)',
+      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif',
+      'font-size:12px',
+      'user-select:none',
+      'backdrop-filter:blur(12px)',
+      '-webkit-backdrop-filter:blur(12px)',
+    ].join(';');
 
     const shortsEnabled = state.shortsEnabled ?? true;
     const autoplayEnabled = state.autoplayEnabled ?? true;
@@ -51,50 +74,33 @@ export class BadgeComponent {
     let exploreTogglesHtml = '';
     if (state.mode === 'explore') {
       exploreTogglesHtml = `
-        <div class="flex items-center gap-1.5 ml-2 pl-2 border-l border-slate-200 dark:border-slate-800" style="display:flex;align-items:center;gap:0.375rem;margin-left:0.5rem;padding-left:0.5rem;border-left:1px solid #cbd5e1;">
-          <button
-            type="button"
-            id="ff-toggle-shorts"
-            title="Shorts: ${shortsEnabled ? 'ON' : 'OFF'}"
-            class="p-1 rounded-lg border transition cursor-pointer ${
-              shortsEnabled
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950 text-blue-600'
-                : 'border-slate-200 dark:border-slate-700 text-slate-400'
-            }"
-          >
-            ${FILM_SVG}
-          </button>
-          <button
-            type="button"
-            id="ff-toggle-autoplay"
-            title="Autoplay: ${autoplayEnabled ? 'ON' : 'OFF'}"
-            class="p-1 rounded-lg border transition cursor-pointer ${
-              autoplayEnabled
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950 text-blue-600'
-                : 'border-slate-200 dark:border-slate-700 text-slate-400'
-            }"
-          >
-            ${autoplayEnabled ? PLAY_SVG : SQUARE_SVG}
-          </button>
+        <div style="display:flex;align-items:center;gap:6px;margin-left:6px;padding-left:8px;border-left:1px solid ${borderColor};">
+          <button type="button" id="ff-toggle-shorts" title="Shorts: ${shortsEnabled ? 'ON' : 'OFF'}" style="
+            padding:4px;border-radius:6px;border:1px solid ${shortsEnabled ? '#00E5FF' : borderColor};
+            background:${shortsEnabled ? 'rgba(0,229,255,0.1)' : 'transparent'};
+            color:${shortsEnabled ? '#00E5FF' : mutedColor};cursor:pointer;display:flex;align-items:center;
+          ">${FILM_SVG}</button>
+          <button type="button" id="ff-toggle-autoplay" title="Autoplay: ${autoplayEnabled ? 'ON' : 'OFF'}" style="
+            padding:4px;border-radius:6px;border:1px solid ${autoplayEnabled ? '#00E5FF' : borderColor};
+            background:${autoplayEnabled ? 'rgba(0,229,255,0.1)' : 'transparent'};
+            color:${autoplayEnabled ? '#00E5FF' : mutedColor};cursor:pointer;display:flex;align-items:center;
+          ">${autoplayEnabled ? PLAY_SVG : SQUARE_SVG}</button>
         </div>
       `;
     }
 
     badge.innerHTML = `
-      <div class="flex items-center gap-2" style="display:flex;align-items:center;gap:0.5rem;">
-        <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse" style="width:8px;height:8px;border-radius:9999px;background-color:#2563eb;display:inline-block;"></span>
-        <span class="font-semibold text-xs tracking-tight text-slate-900 dark:text-slate-100">${MODE_LABELS[state.mode] || state.mode}</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:${dotColor};box-shadow:0 0 6px ${dotColor};display:inline-block;flex-shrink:0;"></span>
+        <span style="font-weight:600;font-size:12px;color:${textColor};white-space:nowrap;letter-spacing:-0.01em;">${MODE_LABELS[state.mode] || state.mode}</span>
       </div>
       ${exploreTogglesHtml}
       <button
         type="button"
         id="ff-badge-exit"
         title="Exit Mode"
-        class="ml-2 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-rose-500 transition cursor-pointer"
-        style="margin-left:0.5rem;"
-      >
-        ${X_SVG}
-      </button>
+        style="margin-left:4px;padding:3px;border-radius:50%;border:none;background:transparent;color:${mutedColor};cursor:pointer;display:flex;align-items:center;line-height:1;"
+      >${X_SVG}</button>
     `;
 
     const exitBtn = badge.querySelector<HTMLButtonElement>('#ff-badge-exit');
@@ -129,7 +135,7 @@ export class BadgeComponent {
   }
 
   destroy() {
-    if (this.container && this.container.parentElement) {
+    if (this.container && this.container.parentNode) {
       this.container.remove();
       this.container = null;
     }

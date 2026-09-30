@@ -20,6 +20,10 @@
     },
     "default_title": "__MSG_appName__"
   },
+  "options_ui": {
+    "page": "src/settings/index.html",
+    "open_in_tab": true
+  },
   "background": {
     "service_worker": "background/index.js",
     "type": "module"
@@ -43,12 +47,16 @@
     {
       "resources": [
         "ui.css",
+        "ui2.css",
         "icons/*",
-        "assets/*"
+        "assets/*",
+        "src/settings/index.html",
+        "src/onboarding/index.html"
       ],
       "matches": [
         "*://*.youtube.com/*",
-        "*://youtube.com/*"
+        "*://youtube.com/*",
+        "<all_urls>"
       ]
     }
   ],
