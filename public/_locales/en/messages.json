@@ -1,0 +1,58 @@
+{
+  "appName": {
+    "message": "FocusFeed",
+    "description": "The name of the extension"
+  },
+  "appDescription": {
+    "message": "Intent-layer overlay and focus modes for YouTube",
+    "description": "The description of the extension"
+  },
+  "overlayTitle": {
+    "message": "What are you here for?",
+    "description": "Headline shown on the intent overlay"
+  },
+  "overlaySubtitle": {
+    "message": "Choose a mode to shape your session, or continue to normal YouTube.",
+    "description": "Subheadline on the intent overlay"
+  },
+  "skipNormal": {
+    "message": "Skip — Normal YouTube",
+    "description": "Skip button text"
+  },
+  "modeFindTitle": {
+    "message": "Find Something",
+    "description": "Title for Mode 1"
+  },
+  "modeFindDesc": {
+    "message": "I know what I'm looking for.",
+    "description": "Tagline for Mode 1"
+  },
+  "modeFocusTitle": {
+    "message": "Focus & Learn",
+    "description": "Title for Mode 2"
+  },
+  "modeFocusDesc": {
+    "message": "I want to follow something through.",
+    "description": "Tagline for Mode 2"
+  },
+  "modeCatchUpTitle": {
+    "message": "Catch Up",
+    "description": "Title for Mode 3"
+  },
+  "modeCatchUpDesc": {
+    "message": "I want to see what's new from creators I follow.",
+    "description": "Tagline for Mode 3"
+  },
+  "modeExploreTitle": {
+    "message": "Explore",
+    "description": "Title for Mode 4"
+  },
+  "modeExploreDesc": {
+    "message": "I'm open to finding something new.",
+    "description": "Tagline for Mode 4"
+  },
+  "exitMode": {
+    "message": "Exit Mode",
+    "description": "Exit active mode button"
+  }
+}
